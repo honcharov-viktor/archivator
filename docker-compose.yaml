@@ -1,0 +1,71 @@
+version: "3.8"
+services:
+
+  workers-api:
+    image: node:16-alpine #TODO: use prebuild image with pm2 and remove it from package.json
+    working_dir: /app
+    user: node
+    command: 'npm run start:debug'
+    env_file: ./workers-api/.env
+    ports:
+      - 9001:8080
+    volumes:
+      - ./workers-api:/app
+
+  # user-api:
+  #   image: node:16-alpine
+  #   working_dir: /usr/app
+  #   user: node
+  #   command: 'npm run start:debug'
+  #   env_file: ./archivator-worker/.env
+  #   ports:
+  #     - 9002:8080
+  #   volumes:
+  #     - ./user-api:/usr/app
+
+  archivator-worker:
+    image: node:16-alpine
+    working_dir: /usr/app
+    user: node
+    command: 'npm run start:debug'
+    env_file: ./archivator-worker/.env
+    volumes:
+      - ./archivator-worker:/usr/app
+  
+  minio:
+    image: minio/minio
+    command: server /data
+    volumes:
+      - ./data/s3:/data
+    ports:
+      - 9000:9000
+    environment:
+      MINIO_ACCESS_KEY: minio
+      MINIO_SECRET_KEY: minio123
+    restart: unless-stopped
+  
+  rabbit:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "HHFGKLJKDN"
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "123456"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - 15672:15672
+      - 5672:5672
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:4
+    volumes:
+      - ./data/db:/data/db
+    ports:
+        - 28017:27017
+    environment:
+      MONGO_DATA_DIR: /data/db
+      MONGO_LOG_DIR: /dev/null
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: admin
+    restart: unless-stopped
