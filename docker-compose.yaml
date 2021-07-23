@@ -12,16 +12,16 @@ services:
     volumes:
       - ./workers-api:/app
 
-  # user-api:
-  #   image: node:16-alpine
-  #   working_dir: /usr/app
-  #   user: node
-  #   command: 'npm run start:debug'
-  #   env_file: ./archivator-worker/.env
-  #   ports:
-  #     - 9002:8080
-  #   volumes:
-  #     - ./user-api:/usr/app
+  user-api:
+    image: node:16-alpine
+    working_dir: /usr/app
+    user: node
+    command: 'npm run start:debug'
+    env_file: ./user-api/.env
+    ports:
+      - 9002:8080
+    volumes:
+      - ./user-api:/usr/app
 
   archivator-worker:
     image: node:16-alpine
@@ -34,11 +34,12 @@ services:
   
   minio:
     image: minio/minio
-    command: server /data
+    command: server /data --console-address :8001
     volumes:
       - ./data/s3:/data
     ports:
       - 9000:9000
+      - 8001:8001
     environment:
       MINIO_ACCESS_KEY: minio
       MINIO_SECRET_KEY: minio123

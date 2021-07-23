@@ -5,4 +5,4 @@ node_modules/
 .env
 
 # local data for DB/S3
-./data
+data
