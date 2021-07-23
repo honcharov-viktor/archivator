@@ -15,6 +15,7 @@ const server = http.createServer(app);
 
 const mongodb = require('../db/mongodb');
 const rabbitmq = require('../db/amqp');
+const s3Client = require('../db/s3Client');
 
 function onSignal () {
   logger.info('Starting signal cleanup');
@@ -22,7 +23,7 @@ function onSignal () {
 }
 
 async function onHealthCheck () {
-  return Promise.all([mongodb.isConnected(), rabbitmq.isConnected()])
+  return Promise.all([mongodb.isConnected(), rabbitmq.isConnected(), s3Client.isConnected()])
     .catch((err) => {
       throw new HealthCheckError('healthcheck failed', err);
     });

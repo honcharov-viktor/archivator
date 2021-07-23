@@ -28,7 +28,7 @@ const envVarsSchema = Joi.object({
   S3_SECURE: Joi.boolean().default(true),
   S3_ACCESS_KEY: Joi.string().required(),
   S3_SECRET_KEY: Joi.string().required(),
-  S3_USER_FILES_BUCKET: Joi.string().default('user_files'),
+  S3_USER_FILES_BUCKET: Joi.string().default('user-files'),
 
 }).unknown()
   .required();

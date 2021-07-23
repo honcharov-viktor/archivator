@@ -21,7 +21,8 @@ function processMsg(channel) {
     } catch (error) {
       // TODO: fix this error handler
       error.task = task;
-      logger.error(`[Worker] fail task`, error);
+      console.error(`[Worker] fail task`, error);
+      // logger.error(`[Worker] fail task`, error);
       channel.reject(msg, false);
     }
   }
